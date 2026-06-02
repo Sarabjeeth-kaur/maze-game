@@ -71,6 +71,18 @@ setInterval(updateTimer, 1000)
 
 walls.forEach((wall) => {
   wall.addEventListener('mouseenter', () => {
+    console.log('WALL HIT')
+
+    hitSound.pause()
+    hitSound.currentTime = 0
+    hitSound.volume = 1
+
+    hitSound.play().then(() => {
+      console.log('Sound played')
+    }).catch(err => {
+      console.log('Sound failed', err)
+    })
+
     resetGame()
   })
 })
