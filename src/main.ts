@@ -3,30 +3,60 @@ import './style.css'
 const hitSound = new Audio('/hit.mp3')
 const winSound = new Audio('/win.mp3')
 
-const warning = document.getElementById("warning") as HTMLDivElement
-const timerText = document.getElementById("timer") as HTMLDivElement
-const bestText = document.getElementById("best") as HTMLDivElement
-const game = document.getElementById("game") as HTMLDivElement
-const end = document.getElementById("end") as HTMLDivElement
+const warning = document.getElementById('warning') as HTMLDivElement
+const timerText = document.getElementById('timer') as HTMLDivElement
+const bestText = document.getElementById('best') as HTMLDivElement
+const game = document.getElementById('game') as HTMLDivElement
+const end = document.getElementById('end') as HTMLDivElement
+const start = document.getElementById('start') as HTMLDivElement
 
-const walls = document.querySelectorAll(".wall")
+const walls = document.querySelectorAll('.wall')
 
 let startTime = Date.now()
 let bestScore: number | null = null
+let audioEnabled = false
+
+// Unlock audio after user clicks START
+start.addEventListener('click', async () => {
+  audioEnabled = true
+
+  try {
+    await hitSound.play()
+    hitSound.pause()
+    hitSound.currentTime = 0
+
+    await winSound.play()
+    winSound.pause()
+    winSound.currentTime = 0
+  } catch (err) {
+    console.log('Audio unlock failed:', err)
+  }
+
+  warning.textContent = '🎮 Game Started!'
+
+  setTimeout(() => {
+    warning.textContent = ''
+  }, 1000)
+
+  startTime = Date.now()
+})
 
 function resetGame() {
   if (audioEnabled) {
-  hitSound.currentTime = 0
-  hitSound.play().catch(() => {})
-}
+    hitSound.currentTime = 0
 
-  warning.textContent = "❌ Pig hit the wall!"
+    hitSound.play().catch((err) => {
+      console.log('Hit sound error:', err)
+    })
+  }
 
-  game.classList.add("flash")
+  warning.textContent = '❌ Pig hit the wall!'
+
+  game.classList.add('flash')
 
   setTimeout(() => {
-    warning.textContent = ""
-    game.classList.remove("flash")
+    warning.textContent = ''
+    game.classList.remove('flash')
   }, 800)
 
   startTime = Date.now()
@@ -40,17 +70,19 @@ function updateTimer() {
 setInterval(updateTimer, 1000)
 
 walls.forEach((wall) => {
-  wall.addEventListener("mouseenter", () => {
+  wall.addEventListener('mouseenter', () => {
     resetGame()
   })
 })
 
-end.addEventListener("mouseenter", () => {
-
+end.addEventListener('mouseenter', () => {
   if (audioEnabled) {
-  winSound.currentTime = 0
-  winSound.play().catch(() => {})
-}
+    winSound.currentTime = 0
+
+    winSound.play().catch((err) => {
+      console.log('Win sound error:', err)
+    })
+  }
 
   const seconds = Math.floor((Date.now() - startTime) / 1000)
 
@@ -59,7 +91,9 @@ end.addEventListener("mouseenter", () => {
     bestText.textContent = `Best: ${bestScore}s`
   }
 
-  alert(`🏆 You escaped the Dream Maze in ${seconds} seconds!`)
+  setTimeout(() => {
+    alert(`🏆 You escaped the Dream Maze in ${seconds} seconds!`)
+  }, 100)
 
   startTime = Date.now()
 })
