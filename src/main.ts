@@ -15,7 +15,10 @@ let startTime = Date.now()
 let bestScore: number | null = null
 
 function resetGame() {
-  hitSound.play()
+  if (audioEnabled) {
+  hitSound.currentTime = 0
+  hitSound.play().catch(() => {})
+}
 
   warning.textContent = "❌ Pig hit the wall!"
 
@@ -44,7 +47,10 @@ walls.forEach((wall) => {
 
 end.addEventListener("mouseenter", () => {
 
-  winSound.play()
+  if (audioEnabled) {
+  winSound.currentTime = 0
+  winSound.play().catch(() => {})
+}
 
   const seconds = Math.floor((Date.now() - startTime) / 1000)
 
