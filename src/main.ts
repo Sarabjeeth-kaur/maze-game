@@ -50,7 +50,7 @@ function resetGame() {
     })
   }
 
-  warning.textContent = '❌ Pig hit the wall!'
+  warning.textContent = 'Pig hit the wall!'
 
   game.classList.add('flash')
 
@@ -88,15 +88,15 @@ walls.forEach((wall) => {
 })
 
 end.addEventListener('mouseenter', () => {
+  console.log('WIN REACHED')
+
+  const seconds = Math.floor((Date.now() - startTime) / 1000)
+
   if (audioEnabled) {
     winSound.currentTime = 0
 
-    winSound.play().catch((err) => {
-      console.log('Win sound error:', err)
-    })
+    winSound.play().catch(console.error)
   }
-
-  const seconds = Math.floor((Date.now() - startTime) / 1000)
 
   if (bestScore === null || seconds < bestScore) {
     bestScore = seconds
@@ -104,8 +104,8 @@ end.addEventListener('mouseenter', () => {
   }
 
   setTimeout(() => {
-    alert(`🏆 You escaped the Dream Maze in ${seconds} seconds!`)
-  }, 100)
+    alert(`You escaped the Dream Maze in ${seconds} seconds!`)
+  }, 1000)
 
   startTime = Date.now()
 })
